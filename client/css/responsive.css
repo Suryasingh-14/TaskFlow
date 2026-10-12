@@ -1,0 +1,107 @@
+/* ==========================================================================
+   TaskFlow: responsive.css
+   Overrides for smaller screens. Loaded last, so these rules win.
+   Breakpoints: 1150px (small laptop), 1000px (tablet), 860px (phone), 520px (small phone)
+   ========================================================================== */
+
+
+/* ---- Small laptop ---- */
+@media (max-width: 1150px) {
+  .stats  { grid-template-columns: repeat(3, 1fr); }
+  .grid-2 { grid-template-columns: 1fr; }
+}
+
+
+/* ---- Tablet: hero stacks (text on top, demo below) ---- */
+@media (max-width: 1000px) {
+  .hero {
+    grid-template-columns: 1fr;
+    gap: 36px;
+    padding: 40px 32px;
+  }
+
+  .hero-demo { max-width: 540px; }
+}
+
+
+/* ---- Phone ---- */
+@media (max-width: 860px) {
+
+  /* Navbar: links collapse into a dropdown. JS toggles .menu-open on #navbar */
+  .navbar              { padding: 10px 14px; }
+  .navbar-inner        { gap: 10px; }
+  .navbar.is-scrolled .navbar-inner { max-width: 100%; }
+  .menu-toggle         { display: grid; }
+
+  .nav {
+    position: absolute;
+    top: calc(100% + 2px);
+    left: 14px;
+    right: 14px;
+    flex-direction: column;
+    padding: 8px;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    background: var(--card);
+    box-shadow: var(--shadow-hover);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-8px);
+    transition: opacity 0.3s ease, transform 0.35s var(--ease);
+  }
+
+  .navbar.menu-open .nav {
+    opacity: 1;
+    pointer-events: auto;
+    transform: none;
+  }
+
+  .nav-pill            { display: none; }   /* the sliding pill is desktop only */
+  .nav-item            { padding: 12px 16px; font-size: 16px; text-align: left; }
+  .nav-item.is-active  { background: var(--coral); }
+
+  /* Page */
+  .content     { padding: 8px 16px 40px; }
+  .page-title  { margin-bottom: 18px; font-size: 30px; }
+
+  /* Hero */
+  .hero        { padding: 30px 22px; border-radius: 20px; }
+  .hero-sub    { font-size: 16px; }
+  .hero-facts  { gap: 20px; }
+  .demo        { transform: none; }
+
+  /* Overview */
+  .stats { grid-template-columns: repeat(2, 1fr); }
+
+  /* Board scrolls sideways and snaps column by column */
+  .board {
+    grid-template-columns: repeat(3, 82vw);
+    padding-bottom: 12px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+  }
+
+  .column { scroll-snap-align: start; }
+
+  /* Forms and list */
+  .field-row                       { flex-direction: column; gap: 0; }
+  .toolbar input[type="search"]    { width: 100%; min-width: 0; }
+
+  /* Bigger tap targets */
+  .btn,
+  .icon-btn,
+  select,
+  input[type="date"],
+  input[type="text"] { min-height: 44px; }
+
+  /* Calendar */
+  .cal-day  { min-height: 64px; padding: 5px; }
+  .cal-task { font-size: 11px; }
+}
+
+
+/* ---- Small phone: hide the wordmark so the navbar buttons fit ---- */
+@media (max-width: 520px) {
+  .brand-name { display: none; }
+  .hero-actions .btn { flex: 1; }
+}
