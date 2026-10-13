@@ -29,6 +29,7 @@
   --blue-text:    #1a4d75;                 /* text on blue-soft */
   --coral:        #ef8557;                 /* accent: actions and highlights */
   --coral-soft:   #f9dfd2;
+  --coral-ink:    #d4582a;                 /* coral used for TEXT (deeper, readable on ivory) */
   --coral-text:   #8a3a12;
   --danger:       #cb0e31;                 /* ONLY overdue, urgent and errors */
   --danger-soft:  #f7dde2;
@@ -79,6 +80,7 @@
   --blue-soft:    rgba(90, 165, 219, 0.16);
   --blue-text:    #a9d2f0;
   --coral-soft:   rgba(239, 133, 87, 0.16);
+  --coral-ink:    #ef8557;
   --coral-text:   #f5b592;
   --danger:       #ff6b82;
   --danger-soft:  rgba(255, 107, 130, 0.16);

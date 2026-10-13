@@ -85,11 +85,11 @@
   color: var(--text);
 }
 
-.brand-name em {            /* "Flow" in italic blue */
+.brand-name em {            /* "Flow" in italic coral */
   font-style: italic;
   font-weight: 500;
   letter-spacing: -0.02em;
-  color: var(--blue);
+  color: var(--coral-ink);
 }
 
 /* Logo: a flowing check mark that turns into "+" on hover */
@@ -1043,12 +1043,20 @@ textarea:focus-visible {
   background: var(--card);
   color: var(--text);
   box-shadow: 0 50px 90px rgba(6, 24, 40, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.2) inset;
-  transform: rotateY(-8deg) rotateX(4deg);     /* slight 3D tilt */
-  transition: transform 1s var(--ease);
+  /* Resting tilt. While you hover, JS updates --rx / --ry so the board follows the mouse. */
+  transform: rotateY(var(--ry, -8deg)) rotateX(var(--rx, 4deg));
+  transition: transform 1s var(--ease);         /* slow glide back to rest */
 }
 
-.hero:hover .demo {
-  transform: none;                              /* straightens when hovered */
+.demo.is-tilting {
+  transition: transform 0.15s ease-out;         /* quick response while the mouse moves */
+}
+
+/* Hovering the demo pauses the loop so you can look at it */
+.hero-demo:hover .demo-card,
+.hero-demo:hover .demo-card::before,
+.hero-demo:hover .demo-tick {
+  animation-play-state: paused;
 }
 
 .demo-bar {                                     /* fake window dots */
@@ -1076,7 +1084,7 @@ textarea:focus-visible {
 }
 
 .demo-col {
-  min-height: 200px;
+  min-height: 250px;
   padding: 10px;
   border-radius: 12px;
   background: var(--blue-soft);
@@ -1104,7 +1112,7 @@ textarea:focus-visible {
 .demo-col:nth-child(3) h4::before { background: var(--blue); }
 
 .demo-slot {                                    /* empty space where the moving card passes */
-  height: 62px;
+  height: 88px;
 }
 
 .demo-ghost {                                   /* placeholder cards */
@@ -1218,4 +1226,232 @@ textarea:focus-visible {
 ::view-transition-old(root),
 ::view-transition-new(root) {
   animation-duration: 0.5s;
+}
+
+
+/* ==========================================================================
+   15. AVATAR AND PROFILE MENU
+   Colours come from data-color (coral, blue, slate, sand) set by JS.
+   ========================================================================== */
+[data-color="coral"] { --av-bg: #ef8557; --av-fg: #17212b; }
+[data-color="blue"]  { --av-bg: #226192; --av-fg: #ffffff; }
+[data-color="slate"] { --av-bg: #54606c; --av-fg: #ffffff; }
+[data-color="sand"]  { --av-bg: #cdb998; --av-fg: #17212b; }
+
+.avatar {
+  display: inline-grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--av-bg, #ef8557);
+  color: var(--av-fg, #17212b);
+  font-size: 15px;
+  font-weight: 700;
+  box-shadow: 0 0 0 1px var(--line);
+  transition: transform 0.3s var(--ease-spring), box-shadow 0.3s ease;
+}
+
+button.avatar:hover {
+  transform: scale(1.07);
+  box-shadow: 0 0 0 1px var(--line), 0 8px 20px rgba(18, 52, 82, 0.2);
+}
+
+.avatar-lg { width: 48px; height: 48px; font-size: 17px; }
+.avatar-xl { width: 84px; height: 84px; font-family: var(--display); font-size: 32px; font-weight: 500; }
+
+.profile-wrap {
+  position: relative;
+}
+
+/* Dropdown: hidden until the wrapper gets .is-open (JS toggles it) */
+.profile-menu {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  z-index: 40;
+  width: 264px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--card);
+  box-shadow: var(--shadow-hover);
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(-8px) scale(0.97);
+  transform-origin: top right;
+  transition: opacity 0.25s ease, transform 0.35s var(--ease), visibility 0s 0.35s;
+}
+
+.profile-wrap.is-open .profile-menu {
+  visibility: visible;
+  opacity: 1;
+  transform: none;
+  transition: opacity 0.25s ease, transform 0.35s var(--ease), visibility 0s;
+}
+
+.profile-menu-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 8px 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+.profile-meta {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;                  /* lets long names be cut with "..." */
+}
+
+.profile-name {
+  font-weight: 700;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.profile-sub {
+  font-size: 13px;
+  color: var(--text-soft);
+}
+
+.profile-link {
+  display: block;
+  margin-top: 8px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  color: var(--text);
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.15s ease;
+}
+
+.profile-link:hover {
+  background: var(--hover);
+}
+
+
+/* ==========================================================================
+   16. PROFILE PAGE (profile.html)
+   ========================================================================== */
+.logo-link {                     /* logo as a plain link on the profile page */
+  text-decoration: none;
+}
+
+.logo-link:hover,
+.logo-link:focus-visible {
+  transform: scale(1.06);        /* no morph to "+", it is just a way home */
+  border-radius: 12px;
+}
+
+.logo-link:hover .logo-t,
+.logo-link:focus-visible .logo-t {
+  opacity: 1;
+  transform: none;
+}
+
+.profile-page {
+  max-width: 640px;
+}
+
+.profile-card {
+  padding: 32px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: var(--card);
+  box-shadow: var(--shadow);
+  animation: view-in 0.8s var(--ease);
+}
+
+.profile-preview {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin: 24px 0 28px;
+}
+
+.profile-preview strong {
+  display: block;
+  font-family: var(--display);
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.profile-preview span {
+  font-size: 14px;
+  color: var(--text-soft);
+}
+
+.swatches {
+  margin: 0 0 22px;
+  padding: 0;
+  border: 0;
+}
+
+.swatches legend {
+  margin-bottom: 10px;
+  padding: 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.swatch-row {
+  display: flex;
+  gap: 14px;
+}
+
+.swatch {
+  position: relative;
+  cursor: pointer;
+}
+
+.swatch input {                  /* the real radio is invisible but still usable by keyboard */
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.swatch-dot {
+  display: block;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--av-bg);
+  box-shadow: 0 0 0 1px var(--line);
+  transition: transform 0.25s var(--ease-spring), box-shadow 0.25s ease;
+}
+
+.swatch:hover .swatch-dot {
+  transform: scale(1.1);
+}
+
+.swatch input:checked + .swatch-dot {
+  box-shadow: 0 0 0 3px var(--card), 0 0 0 5px var(--blue);
+}
+
+.swatch input:focus-visible + .swatch-dot {
+  outline: 2px solid var(--blue);
+  outline-offset: 6px;
+}
+
+.profile-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.form-ok {
+  min-height: 1.4em;
+  font-weight: 600;
+  color: var(--blue);
+}
+
+.profile-note {
+  margin-top: 22px;
+  font-size: 13px;
+  color: var(--text-soft);
 }

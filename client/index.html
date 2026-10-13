@@ -79,6 +79,24 @@
           </svg>
         </button>
 
+        <!-- Profile: the avatar opens a small menu. "Edit profile" goes to profile.html -->
+        <div class="profile-wrap" id="profile-wrap">
+          <button class="avatar" id="avatar-btn" data-color="coral"
+                  aria-haspopup="true" aria-expanded="false" aria-label="Open profile menu">U</button>
+
+          <div class="profile-menu" id="profile-menu">
+            <div class="profile-menu-head">
+              <span class="avatar avatar-lg" id="menu-avatar" data-color="coral">U</span>
+              <div class="profile-meta">
+                <strong class="profile-name" id="menu-name">Guest</strong>
+                <!-- JS: later show real progress, for example "5 of 12 tasks done" -->
+                <span class="profile-sub" id="menu-summary">No tasks yet</span>
+              </div>
+            </div>
+            <a class="profile-link" href="profile.html">Edit profile</a>
+          </div>
+        </div>
+
         <!-- Round "+" that expands to say "Create" on hover -->
         <button class="create-btn" id="add-task-btn" aria-label="Create task">
           <span class="create-plus" aria-hidden="true">+</span>
@@ -96,7 +114,8 @@
     <div class="main">
       <main class="content">
 
-        <h1 class="page-title" id="page-title">Overview</h1>
+        <!-- JS replaces this: a greeting on Overview, the page name elsewhere -->
+        <h1 class="page-title" id="page-title">Welcome</h1>
 
         <!-- ============================================================
              VIEW 1: OVERVIEW
@@ -508,6 +527,8 @@
   <div class="toasts" id="toasts" aria-live="polite"></div>
   <div class="loader" id="loader" hidden><span class="spinner"></span> Loading&hellip;</div>
 
+  <!-- common.js: theme + profile helpers shared with profile.html. Must load first. -->
+  <script src="js/common.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

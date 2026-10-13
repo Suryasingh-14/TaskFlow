@@ -100,6 +100,12 @@
 }
 
 
+/* ---- Profile page on phones ---- */
+@media (max-width: 860px) {
+  .profile-card { padding: 24px 20px; }
+}
+
+
 /* ---- Small phone: hide the wordmark so the navbar buttons fit ---- */
 @media (max-width: 520px) {
   .brand-name { display: none; }

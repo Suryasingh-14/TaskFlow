@@ -1,17 +1,10 @@
-// TaskFlow client logic — your turn!
-// Suggested first steps (Milestone 1, in-memory data):
-// 1. Keep tasks in an array: let tasks = [];
-// 2. Switch views when a .nav-item is clicked (toggle the `hidden` attribute on .view sections)
-// 3. Open #task-modal with .showModal() when "Add task" is clicked
-// 4. On form submit: validate title, push to tasks, re-render board + list
-// ---- Starter code: view switching + modal, so you can see every page ----
-// Replace or extend this as you learn. Real task logic goes below.
-
 /* ==========================================================================
-   TaskFlow: app.js
+   TaskFlow: app.js  (for index.html)
+
+   Needs common.js to be loaded first (theme and profile helpers live there).
 
    PART 1: STARTER CODE (already written for you; read it and learn from it)
-           navbar, page switching, theme toggle, modal, scroll effects.
+           pages, greeting, profile menu, modal, hero effects, scroll effects.
    PART 2: YOUR TASK LOGIC (at the bottom; this is where you build)
    ========================================================================== */
 
@@ -29,12 +22,30 @@ const views       = document.querySelectorAll(".view");
 const pageTitle   = document.getElementById("page-title");
 const modal       = document.getElementById("task-modal");
 const menuToggle  = document.getElementById("menu-toggle");
-const themeToggle = document.getElementById("theme-toggle");
 const progressBar = document.getElementById("scroll-progress");
+const profileWrap = document.getElementById("profile-wrap");
+const avatarBtn   = document.getElementById("avatar-btn");
+
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 
 /* --------------------------------------------------------------------------
-   2. PAGES (VIEWS): show one section, hide the others
+   2. GREETING (replaces the "Overview" title)
+   "Good evening, Surya" (or just "Good evening" if no name is saved yet)
+   -------------------------------------------------------------------------- */
+function getGreeting() {
+  const hour = new Date().getHours();
+  let part = "Good evening";
+  if (hour < 12) part = "Good morning";
+  else if (hour < 17) part = "Good afternoon";
+
+  const firstName = getProfile().name.trim().split(/\s+/)[0];
+  return firstName ? `${part}, ${firstName}` : part;
+}
+
+
+/* --------------------------------------------------------------------------
+   3. PAGES (VIEWS): show one section, hide the others
    -------------------------------------------------------------------------- */
 
 // Slide the coral pill behind the active nav link
@@ -65,11 +76,16 @@ function showView(name, scrollToTop = true) {
     item.classList.toggle("is-active", item.dataset.view === name);
   });
 
-  // Update the big title
-  pageTitle.textContent = name === "tasks" ? "My Tasks" : name[0].toUpperCase() + name.slice(1);
+  // Title: a greeting on Overview, the page name on the others
+  if (name === "overview") {
+    pageTitle.textContent = getGreeting();
+  } else {
+    pageTitle.textContent = name === "tasks" ? "My Tasks" : name[0].toUpperCase() + name.slice(1);
+  }
 
   movePill();
   closeMenu();
+  setProfileMenu(false);
   if (scrollToTop) window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
@@ -83,13 +99,11 @@ navItems.forEach((item) => {
 
 window.addEventListener("hashchange", () => showView(location.hash.slice(1)));
 window.addEventListener("resize", movePill);
-
-showView(location.hash.slice(1) || "overview", false);   // first load: no scrolling
-document.fonts.ready.then(movePill);                      // measure again once fonts load
+document.fonts.ready.then(movePill);   // measure again once fonts load
 
 
 /* --------------------------------------------------------------------------
-   3. MOBILE MENU
+   4. MOBILE MENU
    -------------------------------------------------------------------------- */
 menuToggle.addEventListener("click", () => {
   const isOpen = navbar.classList.toggle("menu-open");
@@ -98,43 +112,43 @@ menuToggle.addEventListener("click", () => {
 
 
 /* --------------------------------------------------------------------------
-   4. THEME: light / dark
-   The initial theme is set by a small script in <head> (no white flash).
-   Here we only handle the toggle button and remember the choice.
+   5. PROFILE MENU (avatar dropdown)
+   "Edit profile" is a normal link to profile.html, so no JS is needed for it.
    -------------------------------------------------------------------------- */
-function applyTheme(theme) {
-  document.documentElement.setAttribute("data-theme", theme);
-  themeToggle.setAttribute(
-    "aria-label",
-    theme === "dark" ? "Switch to light mode" : "Switch to dark mode"
-  );
-  try {
-    localStorage.setItem("taskflow-theme", theme);
-  } catch (error) {
-    // Storage can be blocked (private mode). The theme still works for this visit.
-  }
+
+// Fill the avatar and the menu with the saved profile
+function renderProfile() {
+  const profile = getProfile();
+  paintAvatar(avatarBtn, profile);
+  paintAvatar(document.getElementById("menu-avatar"), profile);
+  document.getElementById("menu-name").textContent = profile.name || "Guest";
 }
 
-themeToggle.addEventListener("click", () => {
-  const current = document.documentElement.getAttribute("data-theme");
-  const next = current === "dark" ? "light" : "dark";
+function setProfileMenu(open) {
+  profileWrap.classList.toggle("is-open", open);
+  avatarBtn.setAttribute("aria-expanded", String(open));
+}
 
-  // Browsers that support View Transitions cross-fade the whole page smoothly.
-  // Others (and people who prefer reduced motion) just switch instantly.
-  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  if (document.startViewTransition && !reduceMotion) {
-    document.startViewTransition(() => applyTheme(next));
-  } else {
-    applyTheme(next);
-  }
+avatarBtn.addEventListener("click", (event) => {
+  event.stopPropagation();   // so the "click outside" listener below does not close it at once
+  setProfileMenu(!profileWrap.classList.contains("is-open"));
 });
 
-// Make the button label correct on first load
-applyTheme(document.documentElement.getAttribute("data-theme") || "light");
+// Click anywhere else, or press Escape, to close the menu
+document.addEventListener("click", (event) => {
+  if (!profileWrap.contains(event.target)) setProfileMenu(false);
+});
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") setProfileMenu(false);
+});
+
+renderProfile();
+showView(location.hash.slice(1) || "overview", false);   // first load: no scrolling
 
 
 /* --------------------------------------------------------------------------
-   5. MODAL (add / edit form) AND HERO BUTTONS
+   6. MODAL (add / edit form) AND HERO BUTTONS
    Logo, Create button and hero button all open the same form.
    -------------------------------------------------------------------------- */
 function openTaskModal() {
@@ -153,7 +167,35 @@ document.getElementById("modal-cancel").addEventListener("click", () => modal.cl
 
 
 /* --------------------------------------------------------------------------
-   6. SCROLL EFFECTS: floating navbar and progress line
+   7. HERO DEMO: the mini board tilts toward the mouse
+   CSS reads the --rx / --ry variables we set here. Moving the mouse to the right
+   edge turns the board to the right, and so on. On leave, the variables are
+   removed and CSS glides the board back to its resting tilt.
+   -------------------------------------------------------------------------- */
+const demoWrap = document.querySelector(".hero-demo");
+const demoBoard = document.querySelector(".demo");
+
+if (demoWrap && demoBoard && !reduceMotion) {
+  demoWrap.addEventListener("mousemove", (event) => {
+    const box = demoWrap.getBoundingClientRect();
+    const x = (event.clientX - box.left) / box.width - 0.5;    // -0.5 (left) ... 0.5 (right)
+    const y = (event.clientY - box.top) / box.height - 0.5;    // -0.5 (top)  ... 0.5 (bottom)
+
+    demoBoard.classList.add("is-tilting");
+    demoBoard.style.setProperty("--ry", x * 14 + "deg");
+    demoBoard.style.setProperty("--rx", -y * 10 + "deg");
+  });
+
+  demoWrap.addEventListener("mouseleave", () => {
+    demoBoard.classList.remove("is-tilting");
+    demoBoard.style.removeProperty("--ry");
+    demoBoard.style.removeProperty("--rx");
+  });
+}
+
+
+/* --------------------------------------------------------------------------
+   8. SCROLL EFFECTS: floating navbar and progress line
    requestAnimationFrame limits the work to once per screen refresh (smooth).
    -------------------------------------------------------------------------- */
 let scrollTicking = false;
@@ -186,7 +228,7 @@ onScroll(); // set the correct state on first load
 
 
 /* --------------------------------------------------------------------------
-   7. REVEAL ON SCROLL: sections fade and slide up when they enter the screen
+   9. REVEAL ON SCROLL: sections fade and slide up when they enter the screen
    -------------------------------------------------------------------------- */
 const revealTargets = document.querySelectorAll(".panel, .toolbar, .table-wrap, .column, .cal-grid");
 
@@ -209,7 +251,7 @@ revealTargets.forEach((element, index) => {
 
 
 /* --------------------------------------------------------------------------
-   8. HELPER FOR YOU: count a number up smoothly
+   10. HELPER FOR YOU: count a number up smoothly
    Example (later):  animateNumber(document.getElementById("stat-total"), tasks.length);
    -------------------------------------------------------------------------- */
 function animateNumber(element, to, duration = 900) {

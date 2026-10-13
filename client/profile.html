@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Your profile | TaskFlow</title>
+
+  <!-- Same no-flash theme script as index.html -->
+  <script>
+    (function () {
+      var theme = "light";
+      try {
+        var saved = localStorage.getItem("taskflow-theme");
+        if (saved) theme = saved;
+        else if (window.matchMedia("(prefers-color-scheme: dark)").matches) theme = "dark";
+      } catch (e) {}
+      document.documentElement.setAttribute("data-theme", theme);
+    })();
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+  <!-- ================================================================
+       NAVBAR (simple version): logo links home, back button, theme toggle
+       ================================================================ -->
+  <header class="navbar" id="navbar">
+    <div class="navbar-inner">
+
+      <div class="brand">
+        <a class="logo logo-link" href="index.html" aria-label="TaskFlow home">
+          <span class="logo-t" aria-hidden="true">
+            <svg viewBox="0 0 40 40" width="40" height="40" fill="none" stroke="currentColor"
+                 stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round">
+              <path class="logo-draw" pathLength="100" d="M10.5 21.5 L16.5 27.5 C19.8 21.5 24 16 29.5 12"/>
+            </svg>
+          </span>
+        </a>
+        <span class="brand-name">Task<em>Flow</em></span>
+      </div>
+
+      <a class="btn btn-ghost" href="index.html">Back to TaskFlow</a>
+
+      <button class="theme-toggle" id="theme-toggle" aria-label="Switch to dark mode">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="4.5"/>
+          <path d="M12 1.5v2.5M12 20v2.5M4.2 4.2l1.8 1.8M18 18l1.8 1.8M1.5 12H4M20 12h2.5M4.2 19.8L6 18M18 6l1.8-1.8"/>
+        </svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>
+        </svg>
+      </button>
+
+    </div>
+  </header>
+
+  <!-- ================================================================
+       PROFILE FORM
+       ================================================================ -->
+  <main class="content profile-page">
+    <div class="profile-card">
+
+      <h1 class="page-title">Your profile</h1>
+
+      <!-- Live preview: updates while you type, before you save -->
+      <div class="profile-preview">
+        <span class="avatar avatar-xl" id="preview-avatar" data-color="coral">U</span>
+        <div>
+          <strong id="preview-name">Guest</strong>
+          <span>This is how you appear in TaskFlow</span>
+        </div>
+      </div>
+
+      <form id="profile-form" novalidate>
+
+        <div class="field">
+          <label for="profile-name">Display name</label>
+          <input type="text" id="profile-name" name="name" maxlength="40" autocomplete="name" placeholder="Your name">
+        </div>
+
+        <fieldset class="swatches">
+          <legend>Avatar colour</legend>
+          <div class="swatch-row">
+            <label class="swatch">
+              <input type="radio" name="color" value="coral">
+              <span class="swatch-dot" data-color="coral"></span>
+              <span class="sr-only">Coral</span>
+            </label>
+            <label class="swatch">
+              <input type="radio" name="color" value="blue">
+              <span class="swatch-dot" data-color="blue"></span>
+              <span class="sr-only">Blue</span>
+            </label>
+            <label class="swatch">
+              <input type="radio" name="color" value="slate">
+              <span class="swatch-dot" data-color="slate"></span>
+              <span class="sr-only">Slate</span>
+            </label>
+            <label class="swatch">
+              <input type="radio" name="color" value="sand">
+              <span class="swatch-dot" data-color="sand"></span>
+              <span class="sr-only">Sand</span>
+            </label>
+          </div>
+        </fieldset>
+
+        <div class="profile-actions">
+          <button type="submit" class="btn btn-primary btn-lg">Save changes</button>
+          <p class="form-ok" id="profile-status" role="status"></p>
+        </div>
+
+      </form>
+
+      <p class="profile-note">
+        Your profile is saved in this browser only. Real accounts come later,
+        when the backend is ready.
+      </p>
+
+    </div>
+  </main>
+
+  <script src="js/common.js"></script>
+  <script src="js/profile.js"></script>
+</body>
+</html>
